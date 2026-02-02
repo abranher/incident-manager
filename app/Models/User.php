@@ -6,6 +6,8 @@ namespace App\Models;
 use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,4 +52,22 @@ class User extends Authenticatable
       'password' => 'hashed',
     ];
   }
+
+  public function departments(): BelongsToMany
+  {
+    return $this->belongsToMany(Department::class, 'department_user');
+  }
+
+  // Incidents assigned to me (as a moderator)
+  public function assignedIncidents(): BelongsToMany
+  {
+    return $this->belongsToMany(Incident::class, 'incident_user');
+  }
+
+  // Incidents created by me (as an employee)
+  public function reportedIncidents(): HasMany
+  {
+    return $this->hasMany(Incident::class, 'user_id');
+  }
 }
+
