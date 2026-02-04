@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\DocumentType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,11 @@ return new class extends Migration
       $table->string('email')->unique();
       $table->timestamp('email_verified_at')->nullable();
       $table->string('password');
+
+      $table->enum('document_type', DocumentType::values());
+      $table->bigInteger('document_number');
+      $table->unique(['document_type', 'document_number']);
+
       $table->rememberToken();
       $table->softDeletes();
       $table->timestamps();

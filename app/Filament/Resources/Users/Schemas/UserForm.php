@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Enums\DocumentType;
 use App\Enums\Role as RoleEnum;
 use App\Models\Role;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Support\Enums\Operation;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Operation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rules\Unique;
 
 class UserForm
 {
@@ -24,6 +27,30 @@ class UserForm
           ->unique()
           ->email()
           ->required(),
+        Grid::make(2)
+          ->schema([
+            Select::make('document_type')
+              ->label('Tipo de Documento')
+              ->options(DocumentType::class)
+              ->required()
+              ->native(false),
+            TextInput::make('document_number')
+              ->label('Número de Documento')
+              ->required()
+              ->numeric()
+              ->placeholder('Ej: 25123456')
+              ->minLength(7)
+              ->maxLength(9)
+              ->unique(
+                table: 'users',
+                ignoreRecord: true,
+                modifyRuleUsing: fn (Unique $rule, callable $get) =>
+                  $rule->where('document_type', $get('document_type'))
+              )
+              ->validationMessages([
+                'unique' => 'Este número de documento ya existe en el sistema.',
+              ]),
+          ]),
         TextInput::make('password')
           ->label('Contraseña')
           ->password()

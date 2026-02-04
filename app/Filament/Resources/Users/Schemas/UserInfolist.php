@@ -13,6 +13,8 @@ class UserInfolist
   {
     return $schema
       ->components([
+        TextEntry::make('full_document')
+          ->label('Documento de Identidad'),
         TextEntry::make('name')
           ->label('Nombre'),
         TextEntry::make('email')

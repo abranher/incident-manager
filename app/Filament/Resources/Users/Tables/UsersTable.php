@@ -19,6 +19,10 @@ class UsersTable
   {
     return $table
       ->columns([
+        TextColumn::make('full_document')
+          ->label('Documento de Identidad')
+          ->searchable(['document_number'])
+          ->sortable(['document_number']),
         TextColumn::make('name')
           ->label('Nombre')
           ->searchable(),

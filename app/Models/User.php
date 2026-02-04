@@ -3,7 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\DocumentType;
 use App\Traits\HasActivityLog;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -28,6 +30,8 @@ class User extends Authenticatable
     'name',
     'email',
     'password',
+    'document_type',
+    'document_number',
   ];
 
   /**
@@ -41,6 +45,15 @@ class User extends Authenticatable
   ];
 
   /**
+   * The accessors to append to the model's array form.
+   *
+   * @var list<string>
+   */
+  protected $appends = [
+    'full_document',
+  ];
+
+  /**
    * Get the attributes that should be cast.
    *
    * @return array<string, string>
@@ -50,7 +63,19 @@ class User extends Authenticatable
     return [
       'email_verified_at' => 'datetime',
       'password' => 'hashed',
+      'document_type' => DocumentType::class,
     ];
+  }
+
+  protected function fullDocument(): Attribute
+  {
+    return Attribute::make(
+      get: function (mixed $value, array $attributes) {
+        if (!$attributes['document_type'] || !$attributes['document_number']) return null;
+        $type = DocumentType::tryFrom($attributes['document_type']);
+        return "{$type?->getLabel()}-{$attributes['document_number']}";
+      },
+    );
   }
 
   public function departments(): BelongsToMany

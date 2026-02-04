@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\DocumentType;
 use App\Enums\Role as RoleEnum;
 use App\Models\Role;
 use App\Models\User;
@@ -22,6 +23,8 @@ class UserSeeder extends Seeder
       'email' => 'admin@example.com',
       'password' => 'password',
       'email_verified_at' => now(),
+      'document_type' => DocumentType::VENEZOLANO,
+      'document_number' => 11111111,
     ])->assignRole($superAdmin);
   }
 }
