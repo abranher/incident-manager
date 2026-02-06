@@ -17,6 +17,8 @@ class UserSeeder extends Seeder
   public function run(): void
   {
     $superAdmin = Role::where('name', RoleEnum::SUPER_ADMIN)->first();
+    $mod = Role::where('name', RoleEnum::MODERATOR)->first();
+    $emp = Role::where('name', RoleEnum::EMPLOYEE)->first();
 
     User::create([
       'name' => 'Administrador',
@@ -24,8 +26,26 @@ class UserSeeder extends Seeder
       'password' => 'password',
       'email_verified_at' => now(),
       'document_type' => DocumentType::VENEZOLANO,
-      'document_number' => 11111111,
+      'document_number' => 12940582,
     ])->assignRole($superAdmin);
+    
+    User::create([
+      'name' => 'Moderador',
+      'email' => 'moderador@example.com',
+      'password' => 'password',
+      'email_verified_at' => now(),
+      'document_type' => DocumentType::VENEZOLANO,
+      'document_number' => 20185920,
+    ])->assignRole($mod);
+
+    User::create([
+      'name' => 'Empleado',
+      'email' => 'empleado@example.com',
+      'password' => 'password',
+      'email_verified_at' => now(),
+      'document_type' => DocumentType::VENEZOLANO,
+      'document_number' => 14959023,
+    ])->assignRole($emp);
   }
 }
 
