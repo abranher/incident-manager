@@ -6,6 +6,7 @@ use App\Enums\Role as RoleEnum;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,14 @@ class AppServiceProvider extends ServiceProvider
 
     TextColumn::configureUsing(function (TextColumn $column) {
       $column->timezone('America/Caracas');
+    });
+
+    Password::defaults(function () {
+      return Password::min(8)
+        ->max(20)
+        ->symbols()
+        ->numbers()
+        ->mixedCase();
     });
   }
 }

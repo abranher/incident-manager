@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Department;
 use App\Models\User;
+use App\Enums\Permission as PermissionEnum;
 use Illuminate\Auth\Access\Response;
 
 class DepartmentPolicy

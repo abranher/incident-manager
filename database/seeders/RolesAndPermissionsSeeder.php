@@ -28,6 +28,10 @@ class RolesAndPermissionsSeeder extends Seeder
 
     $moderator = Role::firstOrCreate(['name' => RoleEnum::MODERATOR->value]);
     $moderator->syncPermissions([
+      // Departments
+      PermissionEnum::VIEW_ANY_DEPARTMENT->value,
+      PermissionEnum::VIEW_DEPARTMENT->value,
+
       // Incidents
       PermissionEnum::VIEW_ANY_INCIDENT->value,
       PermissionEnum::VIEW_INCIDENT->value,
@@ -36,10 +40,6 @@ class RolesAndPermissionsSeeder extends Seeder
 
     $employee = Role::firstOrCreate(['name' => RoleEnum::EMPLOYEE->value]);
     $employee->syncPermissions([
-      // Departments
-      PermissionEnum::VIEW_ANY_DEPARTMENT->value,
-      PermissionEnum::VIEW_DEPARTMENT->value,
-
       // Incidents
       PermissionEnum::VIEW_ANY_INCIDENT->value,
       PermissionEnum::VIEW_INCIDENT->value,

@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Operation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rules\Unique;
 
 class UserForm
@@ -66,7 +67,14 @@ class UserForm
           ->label('Contraseña')
           ->placeholder('Mínimo 8 caracteres')
           ->password()
-          ->rule('confirmed')
+          ->rule(
+            Password::min(8)
+              ->max(20)
+              ->symbols()
+              ->numbers()
+              ->mixedCase()
+          )
+          ->confirmed()
           ->required()
           ->revealable()
           ->hiddenOn(Operation::Edit),

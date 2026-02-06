@@ -15,7 +15,7 @@ enum Role: string implements HasColor, HasIcon, HasLabel
   public function getLabel(): ?string
   {
     return match ($this) {
-      static::SUPER_ADMIN => 'Super Administrador',
+      static::SUPER_ADMIN => 'Administrador',
       static::MODERATOR => 'Moderador',
       static::EMPLOYEE => 'Empleado',
     };
