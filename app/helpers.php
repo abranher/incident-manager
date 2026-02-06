@@ -2,6 +2,7 @@
 
 use App\Models\Department;
 use App\Models\Incident;
+use App\Models\IncidentUpdate;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -12,6 +13,7 @@ if (!function_exists('model_to_spanish')) {
     $spanish = match ($model) {
       Department::class => 'Departamento',
       Incident::class => 'Incidencia',
+      IncidentUpdate::class => 'Seguimiento',
       Permission::class => 'Permiso',
       Role::class => 'Rol',
       User::class => 'Usuario',

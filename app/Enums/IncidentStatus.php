@@ -13,29 +13,26 @@ enum IncidentStatus: string implements HasLabel, HasColor
   case NEW = 'new';
   case ASSIGNED = 'assigned';
   case IN_PROGRESS = 'in_progress';
-  case ON_HOLD = 'on_hold';
   case RESOLVED = 'resolved';
   case CLOSED = 'closed';
 
   public function getLabel(): ?string
   {
     return match ($this) {
-      static::NEW => 'Nuevo',
-      static::ASSIGNED => 'Asignado',
+      static::NEW => 'Nueva',
+      static::ASSIGNED => 'Asignada',
       static::IN_PROGRESS => 'En Progreso',
-      static::ON_HOLD => 'En Espera',
-      static::RESOLVED => 'Resuelto',
-      static::CLOSED => 'Cerrado',
+      static::RESOLVED => 'Resuelta',
+      static::CLOSED => 'Cerrada',
     };
   }
 
   public function getColor(): string|array|null
   {
     return match ($this) {
-      static::NEW => 'gray',
+      static::NEW => 'danger',
       static::ASSIGNED => 'warning',
       static::IN_PROGRESS => 'info',
-      static::ON_HOLD => 'danger',
       static::RESOLVED => 'success',
       static::CLOSED => 'success',
     };

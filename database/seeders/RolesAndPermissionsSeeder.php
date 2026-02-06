@@ -23,20 +23,28 @@ class RolesAndPermissionsSeeder extends Seeder
     }
 
     $superAdmin = Role::firstOrCreate(['name' => RoleEnum::SUPER_ADMIN->value]);
-    $superAdmin->syncPermissions(Permission::all());
+    $allPermissions = Permission::where('name', '!=', PermissionEnum::CREATE_INCIDENT->value)->get();
+    $superAdmin->syncPermissions($allPermissions);
 
     $moderator = Role::firstOrCreate(['name' => RoleEnum::MODERATOR->value]);
     $moderator->syncPermissions([
-      PermissionEnum::VIEW_ANY_USER->value,
-      PermissionEnum::VIEW_USER->value,
-      PermissionEnum::UPDATE_USER->value,
-      PermissionEnum::VIEW_ANY_ACTIVITY_LOG->value,
+      // Incidents
+      PermissionEnum::VIEW_ANY_INCIDENT->value,
+      PermissionEnum::VIEW_INCIDENT->value,
+      PermissionEnum::UPDATE_INCIDENT->value,
     ]);
 
     $employee = Role::firstOrCreate(['name' => RoleEnum::EMPLOYEE->value]);
     $employee->syncPermissions([
-      PermissionEnum::VIEW_ANY_USER->value,
-      PermissionEnum::VIEW_USER->value,
+      // Departments
+      PermissionEnum::VIEW_ANY_DEPARTMENT->value,
+      PermissionEnum::VIEW_DEPARTMENT->value,
+
+      // Incidents
+      PermissionEnum::VIEW_ANY_INCIDENT->value,
+      PermissionEnum::VIEW_INCIDENT->value,
+      PermissionEnum::CREATE_INCIDENT->value,
+      PermissionEnum::UPDATE_INCIDENT->value,
     ]);
   }
 }

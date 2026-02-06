@@ -19,9 +19,11 @@ return new class extends Migration
       $table->text('description');
       $table->enum('status', IncidentStatus::values())->default(IncidentStatus::NEW->value);
       $table->enum('priority', IncidentPriority::values())->default(IncidentPriority::LOW->value);
+      $table->json('attachments')->nullable();
       $table->foreignUuid('user_id')->constrained(); // Creator (Employee)
       $table->foreignUuid('department_id')->constrained();
       $table->timestamp('closed_at')->nullable();
+
       $table->softDeletes();
       $table->timestamps();
     });

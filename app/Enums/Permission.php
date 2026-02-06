@@ -22,12 +22,30 @@ enum Permission: string implements HasLabel
   case VIEW_ANY_ACTIVITY_LOG = 'view_any_activity_log';
   case VIEW_ACTIVITY_LOG     = 'view_activity_log';
 
+  // DEPARTMENTS
+  case VIEW_ANY_DEPARTMENT = 'view_any_department';
+  case VIEW_DEPARTMENT     = 'view_department';
+  case CREATE_DEPARTMENT   = 'create_department';
+  case UPDATE_DEPARTMENT   = 'update_department';
+  case DELETE_DEPARTMENT   = 'delete_department';
+  case RESTORE_DEPARTMENT  = 'restore_department';
+
+  // INCIDENTS
+  case VIEW_ANY_INCIDENT   = 'view_any_incident';
+  case VIEW_INCIDENT       = 'view_incident';
+  case CREATE_INCIDENT     = 'create_incident';
+  case UPDATE_INCIDENT     = 'update_incident';
+  case DELETE_INCIDENT     = 'delete_incident';
+  case RESTORE_INCIDENT    = 'restore_incident';
+
   public function getCategory(): string
   {
     return match (true) {
       str_contains($this->value, '_user')         => 'USUARIOS',
       str_contains($this->value, '_role')         => 'ROLES',
       str_contains($this->value, '_activity_log') => 'BITÁCORA',
+      str_contains($this->value, '_department')   => 'DEPARTAMENTOS',
+      str_contains($this->value, '_incident')     => 'INCIDENCIAS',
       default => 'SISTEMA',
     };
   }
@@ -50,6 +68,22 @@ enum Permission: string implements HasLabel
       // ACTIVITY LOGS
       static::VIEW_ANY_ACTIVITY_LOG => 'Ver bitácora del sistema',
       static::VIEW_ACTIVITY_LOG     => 'Ver detalle de bitácora',
+
+      // DEPARTMENTS
+      static::VIEW_ANY_DEPARTMENT => 'Ver todos los departamentos',
+      static::VIEW_DEPARTMENT     => 'Ver detalle de departamento',
+      static::CREATE_DEPARTMENT   => 'Crear departamento',
+      static::UPDATE_DEPARTMENT   => 'Editar departamento',
+      static::DELETE_DEPARTMENT   => 'Eliminar departamento',
+      static::RESTORE_DEPARTMENT  => 'Restaurar departamento',
+
+      // INCIDENTS
+      static::VIEW_ANY_INCIDENT   => 'Ver todas las incidencias',
+      static::VIEW_INCIDENT       => 'Ver detalle de incidencia',
+      static::CREATE_INCIDENT     => 'Crear incidencia',
+      static::UPDATE_INCIDENT     => 'Editar incidencia',
+      static::DELETE_INCIDENT     => 'Eliminar incidencia',
+      static::RESTORE_INCIDENT    => 'Restaurar incidencia',
     };
   }
 }

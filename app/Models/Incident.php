@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -27,6 +28,7 @@ class Incident extends Model
     'description',
     'status',
     'priority',
+    'attachments',
     'user_id',
     'department_id',
     'closed_at',
@@ -42,6 +44,7 @@ class Incident extends Model
     return [
       'status' => IncidentStatus::class,
       'priority' => IncidentPriority::class,
+      'attachments' => 'array',
       'closed_at' => 'datetime',
     ];
   }
@@ -60,6 +63,11 @@ class Incident extends Model
   {
     return $this->belongsToMany(User::class, 'incident_user')
              ->withPivot('assigned_at');
+  }
+
+  public function updates(): HasMany
+  {
+    return $this->hasMany(IncidentUpdate::class);
   }
 }
 
