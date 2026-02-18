@@ -2,11 +2,13 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\Permission as PermissionEnum;
 use App\Models\ActivityLog;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class LatestActivityLogs extends TableWidget
 {
@@ -15,6 +17,11 @@ class LatestActivityLogs extends TableWidget
   protected int|string|array $columnSpan = 'full';
 
   protected static ?int $sort = 3;
+
+  public static function canView(): bool
+  {
+    return Auth::user()->hasPermissionTo(PermissionEnum::VIEW_ANY_ACTIVITY_LOG->value);
+  }
 
   public function table(Table $table): Table
   {

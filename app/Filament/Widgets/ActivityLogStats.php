@@ -19,7 +19,7 @@ class ActivityLogStats extends StatsOverviewWidget
 
   public static function canView(): bool
   {
-    return Auth::user()->hasPermissionTo(PermissionEnum::VIEW_ACTIVITY_LOG->value);
+    return Auth::user()->hasPermissionTo(PermissionEnum::VIEW_ANY_ACTIVITY_LOG->value);
   }
 
   protected function getStats(): array
