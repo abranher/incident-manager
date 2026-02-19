@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Incidents\Tables;
 
+use App\Enums\Role as RoleEnum;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
 use Filament\Actions\ActionGroup;
@@ -14,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class IncidentsTable
 {
@@ -22,7 +24,7 @@ class IncidentsTable
     return $table
       ->columns([
         TextColumn::make('title')
-          ->label('Incidencia')
+          ->label('Título')
           ->searchable()
           ->wrap(),
         TextColumn::make('status')
@@ -38,7 +40,8 @@ class IncidentsTable
           ->toggleable(),
         TextColumn::make('reporter.name')
           ->label('Reportado por')
-          ->toggleable(),
+          ->toggleable()
+          ->hidden(fn () => Auth::user()->hasRole(RoleEnum::EMPLOYEE->value)),
         TextColumn::make('created_at')
           ->label('Fecha')
           ->date('d/m/Y - g:i A')

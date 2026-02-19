@@ -22,7 +22,7 @@ class IncidentPolicy
    */
   public function view(User $user, Incident $incident): bool
   {
-    return false;
+    return $user->hasPermissionTo(PermissionEnum::VIEW_INCIDENT->value);
   }
 
   /**
@@ -38,7 +38,7 @@ class IncidentPolicy
    */
   public function update(User $user, Incident $incident): bool
   {
-    return false;
+    return $user->hasPermissionTo(PermissionEnum::UPDATE_INCIDENT->value);
   }
 
   /**

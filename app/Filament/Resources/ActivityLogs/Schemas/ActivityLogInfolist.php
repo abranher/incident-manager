@@ -24,8 +24,6 @@ class ActivityLogInfolist
               ->color(fn(string $state): string => get_activity_color($state)),
             TextEntry::make('description')
               ->label('Descripción'),
-            TextEntry::make('subject.name')
-              ->label('Registro afectado'),
             TextEntry::make('causer.name')
               ->label('Causado por')
               ->default('Sistema'),

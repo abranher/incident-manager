@@ -44,7 +44,6 @@ class RolesAndPermissionsSeeder extends Seeder
       PermissionEnum::VIEW_ANY_INCIDENT->value,
       PermissionEnum::VIEW_INCIDENT->value,
       PermissionEnum::CREATE_INCIDENT->value,
-      PermissionEnum::UPDATE_INCIDENT->value,
     ]);
   }
 }

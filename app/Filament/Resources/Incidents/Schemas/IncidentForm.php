@@ -27,7 +27,8 @@ class IncidentForm
                   ->label('Título de la Incidencia')
                   ->placeholder('Ej: El monitor no enciende')
                   ->required()
-                  ->maxLength(255)
+                  ->minLength(10)
+                  ->maxLength(40)
                   ->columnSpanFull(),
                 RichEditor::make('description')
                   ->label('Descripción Detallada')
