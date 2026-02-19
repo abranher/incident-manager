@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Departments\RelationManagers;
+namespace App\Filament\Resources\Incidents\RelationManagers;
 
 use App\Enums\Role as RoleEnum;
 use BackedEnum;
@@ -14,10 +14,13 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ModeratorsRelationManager extends RelationManager
 {
   protected static string $relationship = 'moderators';
+
+  protected static ?string $inverseRelationship = 'assignedIncidents';
 
   protected static string|BackedEnum|null $icon = Heroicon::OutlinedWrenchScrewdriver;
 
@@ -27,6 +30,9 @@ class ModeratorsRelationManager extends RelationManager
 
   public function table(Table $table): Table
   {
+    $hasUpdates = $this->getOwnerRecord()->updates()->exists();
+    $canOverride = Auth::user()->hasRole(RoleEnum::SUPER_ADMIN);
+
     return $table
       ->columns([
         TextColumn::make('full_document')
@@ -39,6 +45,10 @@ class ModeratorsRelationManager extends RelationManager
         TextColumn::make('email')
           ->label('Correo electrónico')
           ->searchable(),
+        TextColumn::make('pivot.assigned_at')
+          ->label('Asignado el')
+          ->dateTime('d/m/Y h:i A')
+          ->sortable(),
       ])
       ->filters([
         //
@@ -46,20 +56,35 @@ class ModeratorsRelationManager extends RelationManager
       ->headerActions([
         AttachAction::make()
           ->label('Asignar Moderador')
-          ->modalHeading('Asignar Moderador al Departamento')
+          ->modalHeading('Asignar Moderador a la Incidencia')
           ->preloadRecordSelect()
+          ->disabled($hasUpdates && !$canOverride)
+          ->tooltip(fn() =>
+            $hasUpdates ? 'No se pueden asignar más moderadores a una incidencia con actividad.' : null
+          )
           ->recordSelectOptionsQuery(fn (Builder $query) =>
             $query->whereHas('roles', fn ($q) => $q->where('name', RoleEnum::MODERATOR))
-          ),
+          )
+          ->after(function () {
+            $incident = $this->getOwnerRecord();
+
+            if ($incident->status === IncidentStatus::NEW) {
+              $incident->update([
+                'status' => IncidentStatus::ASSIGNED,
+              ]);
+            }
+          }),
       ])
       ->recordActions([
         ActionGroup::make([
-          DetachAction::make(),
+          DetachAction::make()
+            ->disabled($hasUpdates && !$canOverride),
         ]),
       ])
       ->toolbarActions([
         BulkActionGroup::make([
-          DetachBulkAction::make(),
+          DetachBulkAction::make()
+            ->disabled($hasUpdates && !$canOverride),
         ]),
       ]);
   }

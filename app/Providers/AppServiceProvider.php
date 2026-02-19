@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\Role as RoleEnum;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -29,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
 
     TextColumn::configureUsing(function (TextColumn $column) {
       $column->timezone('America/Caracas');
+    });
+
+    TextEntry::configureUsing(function (TextEntry $entry) {
+      $entry->timezone('America/Caracas');
     });
 
     Password::defaults(function () {

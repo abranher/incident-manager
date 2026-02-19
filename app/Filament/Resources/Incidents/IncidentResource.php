@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Incidents;
 
 use App\Enums\Role as RoleEnum;
+use App\Filament\Resources\Incidents\RelationManagers\ModeratorsRelationManager;
 use App\Filament\Resources\Incidents\RelationManagers\UpdatesRelationManager;
 use App\Filament\Resources\Incidents\Pages\CreateIncident;
 use App\Filament\Resources\Incidents\Pages\EditIncident;
@@ -19,6 +20,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class IncidentResource extends Resource
 {
@@ -33,7 +35,7 @@ class IncidentResource extends Resource
   public static function getEloquentQuery(): Builder
   {
     $query = parent::getEloquentQuery();
-    $user = auth()->user();
+    $user = Auth::user();
 
     if ($user->hasRole(RoleEnum::SUPER_ADMIN->value)) return $query;
 
@@ -63,6 +65,7 @@ class IncidentResource extends Resource
   public static function getRelations(): array
   {
     return [
+      'moderators' => ModeratorsRelationManager::class,
       'updates' => UpdatesRelationManager::class,
     ];
   }

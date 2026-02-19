@@ -17,7 +17,7 @@ return new class extends Migration
       $table->foreignUuid('user_id')->constrained();
       $table->text('comment');
       $table->json('attachments')->nullable();
-      $table->string('previous_status')->nullable();
+      $table->string('previous_status');
       $table->string('new_status');
       $table->timestamps();
     });

@@ -18,10 +18,10 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class UpdatesRelationManager extends RelationManager
 {
@@ -36,10 +36,33 @@ class UpdatesRelationManager extends RelationManager
     return $schema
       ->components([
         Select::make('new_status')
-          ->label('Cambiar Estado a:')
-          ->options(IncidentStatus::class)
+          ->label('Actualizar estado a:')
           ->required()
           ->native(false)
+          ->options(function (RelationManager $livewire) {
+            return match ($livewire->getOwnerRecord()->status) {
+              IncidentStatus::NEW, IncidentStatus::ASSIGNED => [
+                IncidentStatus::IN_PROGRESS->value => IncidentStatus::IN_PROGRESS->getLabel(),
+                IncidentStatus::RESOLVED->value => IncidentStatus::RESOLVED->getLabel(),
+              ],
+
+              IncidentStatus::IN_PROGRESS => [
+                IncidentStatus::IN_PROGRESS->value => IncidentStatus::IN_PROGRESS->getLabel(),
+                IncidentStatus::RESOLVED->value => IncidentStatus::RESOLVED->getLabel(),
+              ],
+
+              IncidentStatus::RESOLVED => [
+                IncidentStatus::RESOLVED->value => IncidentStatus::RESOLVED->getLabel(),
+                IncidentStatus::CLOSED->value => IncidentStatus::CLOSED->getLabel(),
+              ],
+
+              IncidentStatus::CLOSED => [
+                IncidentStatus::CLOSED->value => IncidentStatus::CLOSED->getLabel(),
+              ],
+
+              default => IncidentStatus::class,
+            };
+          })
           ->default(fn (RelationManager $livewire) => $livewire->getOwnerRecord()->status),
         RichEditor::make('comment')
           ->label('Comentario / Justificación')
@@ -55,10 +78,6 @@ class UpdatesRelationManager extends RelationManager
           ->directory('incident-updates-attachments')
           ->columnSpanFull()
           ->maxFiles(5),
-        Hidden::make('user_id')
-          ->default(auth()->id()),
-        Hidden::make('previous_status')
-          ->default(fn (RelationManager $livewire) => $livewire->getOwnerRecord()->status),
       ]);
   }
 
@@ -67,13 +86,44 @@ class UpdatesRelationManager extends RelationManager
     return $schema
       ->components([
         Section::make('Detalle del Avance')
+          ->icon(Heroicon::OutlinedInformationCircle)
           ->schema([
-            TextEntry::make('comment')->html()->columnSpanFull(),
-            ImageEntry::make('evidence_paths')
-              ->label('Fotos adjuntas')
-              ->square()
-              ->columnSpanFull(),
-          ])->columns(2)
+            TextEntry::make('user.name')
+              ->label('Registrado por')
+              ->weight('bold'),
+            TextEntry::make('created_at')
+              ->label('Fecha')
+              ->dateTime('d/m/Y h:i A'),
+            TextEntry::make('status_change')
+              ->label('Cambio de Estado')
+              ->state(fn (Model $record) =>
+                "{$record->previous_status->getLabel()} → {$record->new_status->getLabel()}"
+              )
+              ->badge()
+              ->color('info'),
+          ])
+          ->columns(['sm' => 1, 'md' => 2, 'lg' => 3])
+          ->columnSpanFull(),
+        Section::make('Comentario')
+          ->schema([
+            TextEntry::make('comment')
+              ->hiddenLabel()
+              ->markdown()
+              ->prose(),
+          ])
+          ->columnSpanFull(),
+        Section::make('Evidencias Adjuntas')
+          ->schema([
+            ImageEntry::make('attachments')
+              ->label('')
+              ->hiddenLabel()
+              ->imageSize(300)
+              ->square(),
+            ])
+          ->hidden(fn (Model $record) => empty($record->attachments))
+          ->collapsible()
+          ->collapsed()
+          ->columnSpanFull(),
       ]);
   }
 
@@ -81,26 +131,20 @@ class UpdatesRelationManager extends RelationManager
   {
     return $table
       ->columns([
+        TextColumn::make('user.name')
+          ->label('Registrado por')
+          ->weight('bold'),
         TextColumn::make('created_at')
           ->label('Fecha')
           ->dateTime('d/m/Y h:i A')
-          ->description(fn (Model $record) => $record->user->name)
           ->sortable(),
         TextColumn::make('status_change')
           ->label('Cambio de Estado')
-          ->state(function (Model $record) {
-            $prev = $record->previous_status?->getLabel() ?? 'N/A';
-            $new = $record->new_status->getLabel();
-            return "{$prev} → {$new}";
-          })
+          ->state(fn (Model $record) =>
+            "{$record->previous_status->getLabel()} → {$record->new_status->getLabel()}"
+          )
           ->badge()
           ->color('info'),
-        ImageColumn::make('attachments')
-          ->label('Evidencias')
-          ->circular()
-          ->stacked()
-          ->limit(3)
-          ->limitedRemainingText()
       ])
       ->defaultSort('created_at', 'desc')
       ->filters([
@@ -109,7 +153,20 @@ class UpdatesRelationManager extends RelationManager
       ->headerActions([
         CreateAction::make()
           ->label('Añadir Avance')
-          ->modalHeading('Registrar Seguimiento Técnico'),
+          ->modalHeading('Registrar Seguimiento Técnico')
+          ->hidden(fn (RelationManager $livewire) =>
+            $livewire->getOwnerRecord()->status === IncidentStatus::CLOSED
+          )
+          ->mutateDataUsing(function (array $data): array {
+            $data['user_id'] = Auth::id();
+            $data['previous_status'] = $this->getOwnerRecord()->status;
+            return $data;
+          })
+          ->after(function (Model $record) {
+            $record->incident->update([
+              'status' => $record->new_status,
+            ]);
+          }),
       ])
       ->recordActions([
         ActionGroup::make([
