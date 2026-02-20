@@ -34,7 +34,7 @@ enum IncidentStatus: string implements HasLabel, HasColor
       static::ASSIGNED => 'warning',
       static::IN_PROGRESS => 'info',
       static::RESOLVED => 'success',
-      static::CLOSED => 'success',
+      static::CLOSED => 'gray',
     };
   }
 }

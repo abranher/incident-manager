@@ -17,6 +17,8 @@ class LatestIncidents extends TableWidget
 {
   protected static ?string $heading = 'Mis Últimas Incidencias';
 
+  protected int|string|array $columnSpan = 'full';
+
   public static function canView(): bool
   {
     return Auth::user()->hasRole(RoleEnum::EMPLOYEE->value);
@@ -34,8 +36,7 @@ class LatestIncidents extends TableWidget
       ->columns([
         TextColumn::make('title')
           ->label('Título')
-          ->searchable()
-          ->wrap(),
+          ->searchable(),
         TextColumn::make('status')
           ->badge()
           ->sortable(),

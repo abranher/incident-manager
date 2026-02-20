@@ -15,6 +15,8 @@ class ClosedIncidents extends TableWidget
 {
   protected static ?string $heading = 'Mis Incidencias Resueltas';
 
+  protected int|string|array $columnSpan = 'full';
+
   protected static ?int $sort = 2;
 
   public static function canView(): bool
@@ -35,8 +37,7 @@ class ClosedIncidents extends TableWidget
       ->columns([
         TextColumn::make('title')
           ->label('Título')
-          ->searchable()
-          ->wrap(),
+          ->searchable(),
         TextColumn::make('status')
           ->badge()
           ->sortable(),

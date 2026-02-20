@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class IncidentsByDepartmentChart extends ChartWidget
 {
-  protected ?string $heading = 'Incidencias por Departamento (Top 7)';
+  protected ?string $heading = 'Incidencias por Departamento (Top 6)';
 
   protected static ?int $sort = 2;
 
   protected int|string|array $columnSpan = 'full';
 
-  protected ?string $maxHeight = '400px';
+  protected ?string $maxHeight = '300px';
 
   public static function canView(): bool
   {
@@ -26,7 +26,7 @@ class IncidentsByDepartmentChart extends ChartWidget
   {
     $data = Department::withCount('incidents')
               ->orderBy('incidents_count', 'desc')
-              ->limit(7)
+              ->limit(6)
               ->get();
 
     return [
