@@ -10,9 +10,11 @@ use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Auth;
 
-class ModeratorDepartmentStats extends StatsOverviewWidget
+class DepartmentStats extends StatsOverviewWidget
 {
   protected ?string $heading = 'Estado Operativo de mis Departamentos';
+
+  protected static ?int $sort = 1;
 
   public static function canView(): bool
   {

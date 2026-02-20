@@ -28,11 +28,20 @@ class IncidentInfolist
               ->badge(),
             TextEntry::make('department.name')
               ->label('Departamento'),
-            TextEntry::make('created_at')
-              ->label('Fecha'),
             TextEntry::make('reporter.name')
               ->label('Reportado por')
               ->hidden(fn () => Auth::user()->hasRole(RoleEnum::EMPLOYEE->value)),
+            TextEntry::make('created_at')
+              ->label('Fecha')
+              ->dateTime('d/m/Y - g:i A'),
+            TextEntry::make('updated_at')
+              ->label('Última actualización')
+              ->since()
+              ->color('primary'),
+            TextEntry::make('closed_at')
+              ->label('Resuelta el')
+              ->placeholder('No finalizada')
+              ->dateTime('d/m/Y g:i A'),
           ])
           ->columns(['sm' => 1, 'md' => 2, 'lg' => 3])
           ->columnSpanFull(),
