@@ -15,7 +15,8 @@ class DepartmentForm
           ->label('Nombre')
           ->required()
           ->unique()
-          ->maxLength(255),
+          ->minLength(2)
+          ->maxLength(50),
       ]);
   }
 }

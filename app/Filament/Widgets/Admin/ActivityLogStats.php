@@ -13,7 +13,7 @@ class ActivityLogStats extends StatsOverviewWidget
 {
   protected ?string $heading = 'Métricas de la Bitácora';
 
-  protected static ?int $sort = 2;
+  protected static ?int $sort = 3;
 
   protected array|int|null $columns = 2;
 

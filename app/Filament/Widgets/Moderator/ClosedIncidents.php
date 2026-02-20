@@ -48,17 +48,6 @@ class ClosedIncidents extends TableWidget
           ->label('Fecha')
           ->date('d/m/Y - g:i A')
           ->sortable(),
-        TextColumn::make('updated_at')
-          ->label('Última actualización')
-          ->since()
-          ->toggleable(isToggledHiddenByDefault: true)
-          ->color('primary'),
-        TextColumn::make('closed_at')
-          ->label('Resuelta el')
-          ->placeholder('No finalizada')
-          ->toggleable(isToggledHiddenByDefault: true)
-          ->dateTime('d/m/Y g:i A')
-          ->sortable(),
       ])
       ->paginated(false)
       ->filters([
