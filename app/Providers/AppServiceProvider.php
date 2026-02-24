@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Enums\Role as RoleEnum;
+use App\Models\Incident;
+use App\Observers\IncidentObserver;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
+    // Observers
+    Incident::observe(IncidentObserver::class);
+
     Gate::before(function ($user, $ability) {
       return $user->hasRole(RoleEnum::SUPER_ADMIN->value) ? true : null;
     });

@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Incidents\RelationManagers;
 
+
 use App\Enums\IncidentStatus;
+use App\Notifications\Employee\IncidentUpdated;
 use BackedEnum;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
@@ -166,6 +168,12 @@ class UpdatesRelationManager extends RelationManager
             $record->incident->update([
               'status' => $record->new_status,
             ]);
+
+            $reporter = $record->incident->reporter;
+
+            if (Auth::id() !== $reporter->id) {
+              $reporter->notify(new IncidentUpdated($record));
+            }
           }),
       ])
       ->recordActions([
