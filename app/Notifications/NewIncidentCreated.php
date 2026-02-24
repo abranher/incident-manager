@@ -6,6 +6,7 @@ use App\Filament\Resources\Incidents\IncidentResource;
 use App\Models\Incident;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -44,12 +45,11 @@ class NewIncidentCreated extends Notification
     return FilamentNotification::make()
       ->title('Nueva incidencia reportada')
       ->body(Str::markdown("**{$this->incident->reporter->name}** ha reportado: {$this->incident->title} en el departamento de **{$this->incident->department->name}**."))
-      ->icon('heroicon-o-exclamation-triangle')
+      ->icon(Heroicon::OutlinedExclamationTriangle)
       ->color('danger')
       ->actions([
         Action::make('view')
           ->label('Ver Incidencia')
-          ->button()
           ->url(fn () => IncidentResource::getUrl('view', ['record' => $this->incident->id])),
       ])
       ->getDatabaseMessage();

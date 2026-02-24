@@ -6,6 +6,7 @@ use App\Filament\Resources\Incidents\IncidentResource;
 use App\Models\IncidentUpdate;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -45,8 +46,8 @@ class IncidentUpdated extends Notification
       ->title("Estado actualizado: {$this->update->incident->title}")
       ->body(Str::markdown("Tu incidencia ha pasado de **{$this->update->previous_status->getLabel()}** a **{$this->update->new_status->getLabel()}**."))
       ->icon($this->update->new_status->getColor() === 'success'
-        ? 'heroicon-o-check-circle'
-        : 'heroicon-o-arrow-path'
+        ? Heroicon::OutlinedCheckCircle
+        : Heroicon::OutlinedArrowPath
       )
       ->color($this->update->new_status->getColor())
       ->actions([
