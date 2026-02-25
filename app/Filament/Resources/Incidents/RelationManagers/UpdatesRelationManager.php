@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Incidents\RelationManagers;
 
 use App\Enums\IncidentStatus;
 use App\Notifications\Employee\IncidentUpdated;
+use App\Notifications\IncidentClosed;
 use BackedEnum;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
@@ -24,6 +25,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class UpdatesRelationManager extends RelationManager
 {
@@ -41,31 +43,28 @@ class UpdatesRelationManager extends RelationManager
           ->label('Actualizar estado a:')
           ->required()
           ->native(false)
-          ->options(function (RelationManager $livewire) {
-            return match ($livewire->getOwnerRecord()->status) {
-              IncidentStatus::NEW, IncidentStatus::ASSIGNED => [
-                IncidentStatus::IN_PROGRESS->value => IncidentStatus::IN_PROGRESS->getLabel(),
-                IncidentStatus::RESOLVED->value => IncidentStatus::RESOLVED->getLabel(),
-              ],
+          ->options(fn (RelationManager $livewire) => match ($livewire->getOwnerRecord()->status) {
+            IncidentStatus::NEW, IncidentStatus::ASSIGNED => [
+              IncidentStatus::IN_PROGRESS->value => IncidentStatus::IN_PROGRESS->getLabel(),
+              IncidentStatus::RESOLVED->value => IncidentStatus::RESOLVED->getLabel(),
+            ],
 
-              IncidentStatus::IN_PROGRESS => [
-                IncidentStatus::IN_PROGRESS->value => IncidentStatus::IN_PROGRESS->getLabel(),
-                IncidentStatus::RESOLVED->value => IncidentStatus::RESOLVED->getLabel(),
-              ],
+            IncidentStatus::IN_PROGRESS => [
+              IncidentStatus::IN_PROGRESS->value => IncidentStatus::IN_PROGRESS->getLabel(),
+              IncidentStatus::RESOLVED->value => IncidentStatus::RESOLVED->getLabel(),
+            ],
 
-              IncidentStatus::RESOLVED => [
-                IncidentStatus::RESOLVED->value => IncidentStatus::RESOLVED->getLabel(),
-                IncidentStatus::CLOSED->value => IncidentStatus::CLOSED->getLabel(),
-              ],
+            IncidentStatus::RESOLVED => [
+              IncidentStatus::RESOLVED->value => IncidentStatus::RESOLVED->getLabel(),
+              IncidentStatus::CLOSED->value => IncidentStatus::CLOSED->getLabel(),
+            ],
 
-              IncidentStatus::CLOSED => [
-                IncidentStatus::CLOSED->value => IncidentStatus::CLOSED->getLabel(),
-              ],
+            IncidentStatus::CLOSED => [
+              IncidentStatus::CLOSED->value => IncidentStatus::CLOSED->getLabel(),
+            ],
 
-              default => IncidentStatus::class,
-            };
-          })
-          ->default(fn (RelationManager $livewire) => $livewire->getOwnerRecord()->status),
+            default => IncidentStatus::class,
+          }),
         RichEditor::make('comment')
           ->label('Comentario / Justificación')
           ->required()
@@ -165,14 +164,20 @@ class UpdatesRelationManager extends RelationManager
             return $data;
           })
           ->after(function (Model $record) {
-            $record->incident->update([
-              'status' => $record->new_status,
-            ]);
+            $incident = $record->incident;
+            $currentUserId = Auth::id();
 
-            $reporter = $record->incident->reporter;
+            $incident->update(['status' => $record->new_status]);
 
-            if (Auth::id() !== $reporter->id) {
-              $reporter->notify(new IncidentUpdated($record));
+            if ($record->new_status === IncidentStatus::CLOSED) {
+              $incident->reporter->notify(new IncidentClosed($incident, isForTeam: false));
+
+              $otherModerators = $incident->moderators->where('id', '!=', $currentUserId);
+              if ($otherModerators->isNotEmpty()) {
+                Notification::send($otherModerators, new IncidentClosed($incident, isForTeam: true));
+              }
+            } else if ($currentUserId !== $incident->user_id) {
+              $incident->reporter->notify(new IncidentUpdated($record));
             }
           }),
       ])
