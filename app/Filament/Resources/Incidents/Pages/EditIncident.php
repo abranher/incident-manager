@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Incidents\Pages;
 
 use App\Filament\Resources\Incidents\IncidentResource;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
@@ -13,13 +12,18 @@ class EditIncident extends EditRecord
 {
   protected static string $resource = IncidentResource::class;
 
+  protected function getFormActions(): array
+  {
+    return [];
+  }
+
   protected function getHeaderActions(): array
   {
-      return [
-          ViewAction::make(),
-          DeleteAction::make(),
-          ForceDeleteAction::make(),
-          RestoreAction::make(),
-      ];
+    return [
+      ViewAction::make(),
+      DeleteAction::make(),
+      RestoreAction::make(),
+    ];
   }
 }
+
