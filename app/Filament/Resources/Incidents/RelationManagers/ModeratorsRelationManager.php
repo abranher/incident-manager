@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\Incidents\RelationManagers;
 
+use App\Enums\IncidentStatus;
 use App\Enums\Role as RoleEnum;
+use App\Models\User;
+use App\Notifications\Moderator\IncidentAssigned;
 use BackedEnum;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
@@ -15,6 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class ModeratorsRelationManager extends RelationManager
 {
@@ -65,13 +69,19 @@ class ModeratorsRelationManager extends RelationManager
           ->recordSelectOptionsQuery(fn (Builder $query) =>
             $query->whereHas('roles', fn ($q) => $q->where('name', RoleEnum::MODERATOR))
           )
-          ->after(function () {
+          ->after(function (AttachAction $action) {
             $incident = $this->getOwnerRecord();
+            $formData = $action->getFormData();
+            $attachedIds = $formData['recordId'] ?? [];
+
+            $attachedIds = is_array($attachedIds) ? $attachedIds : [$attachedIds];
 
             if ($incident->status === IncidentStatus::NEW) {
-              $incident->update([
-                'status' => IncidentStatus::ASSIGNED,
-              ]);
+              $incident->update(['status' => IncidentStatus::ASSIGNED]);
+            }
+
+            if (!empty($attachedIds)) {
+              Notification::send(User::whereIn('id', $attachedIds)->get(), new IncidentAssigned($incident));
             }
           }),
       ])
