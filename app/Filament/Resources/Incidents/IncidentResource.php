@@ -40,8 +40,10 @@ class IncidentResource extends Resource
     if ($user->hasRole(RoleEnum::SUPER_ADMIN->value)) return $query;
 
     if ($user->hasRole(RoleEnum::MODERATOR->value)) {
-      return $query->whereIn('department_id', $user->departments->pluck('id'))
-                   ->orWhereHas('moderators', fn ($q) => $q->where('user_id', $user->id));
+      return $query->where(function (Builder $subQuery) use ($user) {
+        $subQuery->whereIn('department_id', $user->departments->pluck('id'))
+          ->orWhereHas('moderators', fn ($q) => $q->where('user_id', $user->id));
+      });
     }
 
     return $query->where('user_id', $user->id);
