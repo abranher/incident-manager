@@ -34,6 +34,11 @@ class UpdatesRelationManager extends RelationManager
 
   protected static ?string $title = 'Seguimiento de la Incidencia';
 
+  public static function isLazy(): bool
+  {
+    return false;
+  }
+
   public function form(Schema $schema): Schema
   {
     return $schema
@@ -62,7 +67,7 @@ class UpdatesRelationManager extends RelationManager
               IncidentStatus::CLOSED->value => IncidentStatus::CLOSED->getLabel(),
             ],
 
-            default => IncidentStatus::class,
+            default => [],
           }),
         RichEditor::make('comment')
           ->label('Comentario / Justificación')
