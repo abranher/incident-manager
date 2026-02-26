@@ -98,5 +98,58 @@
     </table>
   @endif
 
+  <div class="section-title" style="margin-top: 20px;">Seguimiento de la Incidencia (Historial)</div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 10%;">Fecha</th>
+        <th style="width: 18%;">Técnico</th>
+        <th style="width: 24%;">Estado</th>
+        <th style="width: 30%;">Comentario</th>
+        <th style="width: 18%;">Adjunto</th>
+      </tr>
+    </thead>
+    <tbody>
+      @forelse($incident->updates()->orderBy('created_at', 'desc')->get() as $update)
+        <tr>
+          <td style="font-size: 10px;">
+            {{ $update->created_at->setTimezone('America/Caracas')->format('d/m/Y') }}<br>
+            <span style="color: #718096;">{{ $update->created_at->setTimezone('America/Caracas')->format('h:i A') }}</span>
+          </td>
+          <td style="font-weight: bold;">
+            {{ "{$update->user->name} ({$update->user->email})" }}
+          </td>
+          <td>
+            <x-pdf-badge :state="$update->new_status" />
+          </td>
+          <td style="font-size: 10px; line-height: 1.2;">
+            {!! $update->comment !!}
+          </td>
+          <td style="text-align: center; vertical-align: middle;">
+            @if($update->attachments && count($update->attachments) > 0)
+              @php $firstPhoto = $update->attachments[0]; @endphp
+              <img
+                src="{{ public_path('storage/' . $firstPhoto) }}"
+                style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #cbd5e0; border-radius: 4px;"
+              >
+              @if(count($update->attachments) > 1)
+                <div style="font-size: 8px; color: #3182ce; margin-top: 2px;">+{{ count($update->attachments) - 1 }} más</div>
+              @endif
+            @else
+              <span style="color: #cbd5e0; font-size: 8px;">Sin fotos</span>
+            @endif
+          </td>
+        </tr>
+      @empty
+        <tr>
+          <td colspan="4" style="text-align: center; color: #718096; padding: 20px;">
+            No se han registrado avances técnicos.
+          </td>
+        </tr>
+      @endforelse
+    </tbody>
+  </table>
+
 </x-pdf-layout>
 
