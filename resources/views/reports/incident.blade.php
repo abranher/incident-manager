@@ -32,7 +32,7 @@
       </tr>
       <tr>
         <td style="font-weight: bold;">Reportado por:</td>
-        <td>{{ "{$incident->reporter->name} ({$incident->reporter->email})" }}</td>
+        <td>{{ user_label($incident->reporter->name, $incident->reporter->email) }}</td>
       </tr>
     </tbody>
   </table>
@@ -43,17 +43,17 @@
     <tbody>
       <tr>
         <td style="font-weight: bold; width: 30%;">Fecha de Creación:</td>
-        <td style="width: 70%;">{{ $incident->created_at->format('d/m/Y - g:i A') }}</td>
+        <td style="width: 70%;">{{ $incident->created_at->setTimezone('America/Caracas')->format('d/m/Y - g:i A') }}</td>
       </tr>
       <tr>
         <td style="font-weight: bold;">Última Actualización:</td>
-        <td style="color: #3182ce;">{{ $incident->updated_at->diffForHumans() }}</td>
+        <td style="color: #3182ce;">{{ $incident->updated_at->setTimezone('America/Caracas')->diffForHumans() }}</td>
       </tr>
       <tr>
         <td style="font-weight: bold;">Resuelta el:</td>
         <td>
           @if($incident->closed_at)
-            {{ \Carbon\Carbon::parse($incident->closed_at)->format('d/m/Y - g:i A') }}
+            {{ \Carbon\Carbon::parse($incident->closed_at)->setTimezone('America/Caracas')->format('d/m/Y - g:i A') }}
           @else
             <span style="color: #718096; font-style: italic;">No finalizada</span>
           @endif
