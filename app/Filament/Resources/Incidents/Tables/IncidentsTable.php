@@ -30,8 +30,7 @@ class IncidentsTable
       ->columns([
         TextColumn::make('title')
           ->label('Título')
-          ->searchable()
-          ->wrap(),
+          ->searchable(),
         TextColumn::make('status')
           ->badge()
           ->sortable(),
@@ -46,6 +45,9 @@ class IncidentsTable
         TextColumn::make('reporter.name')
           ->label('Reportado por')
           ->toggleable()
+          ->formatStateUsing(fn (Incident $record) =>
+            user_label($record->reporter->name, $record->reporter->email)
+          )
           ->hidden(fn () => Auth::user()->hasRole(RoleEnum::EMPLOYEE->value)),
         TextColumn::make('created_at')
           ->label('Fecha')

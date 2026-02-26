@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Incidents\Schemas;
 
 use App\Enums\Role as RoleEnum;
+use App\Models\Incident;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -30,6 +31,9 @@ class IncidentInfolist
               ->label('Departamento'),
             TextEntry::make('reporter.name')
               ->label('Reportado por')
+              ->formatStateUsing(fn (Incident $record) =>
+                user_label($record->reporter->name, $record->reporter->email)
+              )
               ->hidden(fn () => Auth::user()->hasRole(RoleEnum::EMPLOYEE->value)),
             TextEntry::make('created_at')
               ->label('Fecha')

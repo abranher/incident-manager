@@ -83,3 +83,10 @@ if (!function_exists('get_activity_color')) {
   }
 }
 
+if (!function_exists('user_label')) {
+  function user_label(string $name, string $email): string
+  {
+    return "{$name} ({$email})";
+  }
+}
+

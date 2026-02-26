@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Incidents\RelationManagers;
 
-
 use App\Enums\IncidentStatus;
 use App\Notifications\Employee\IncidentUpdated;
 use App\Notifications\IncidentClosed;
@@ -91,7 +90,10 @@ class UpdatesRelationManager extends RelationManager
           ->schema([
             TextEntry::make('user.name')
               ->label('Registrado por')
-              ->weight('bold'),
+              ->weight('bold')
+              ->formatStateUsing(fn (Model $record) =>
+                user_label($record->user->name, $record->user->email)
+              ),
             TextEntry::make('created_at')
               ->label('Fecha')
               ->dateTime('d/m/Y h:i A'),
@@ -134,7 +136,8 @@ class UpdatesRelationManager extends RelationManager
       ->columns([
         TextColumn::make('user.name')
           ->label('Registrado por')
-          ->weight('bold'),
+          ->weight('bold')
+          ->description(fn (Model $record): string => $record->user->email),
         TextColumn::make('created_at')
           ->label('Fecha')
           ->dateTime('d/m/Y h:i A')
@@ -183,7 +186,8 @@ class UpdatesRelationManager extends RelationManager
       ])
       ->recordActions([
         ActionGroup::make([
-          ViewAction::make(),
+          ViewAction::make()
+            ->modalHeading('Detalle del Avance Técnico'),
         ])
       ]);
   }
