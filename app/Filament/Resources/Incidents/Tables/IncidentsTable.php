@@ -5,12 +5,16 @@ namespace App\Filament\Resources\Incidents\Tables;
 use App\Enums\IncidentPriority;
 use App\Enums\IncidentStatus;
 use App\Enums\Role as RoleEnum;
+use App\Models\Incident;
+use App\Services\ReportService;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -72,6 +76,17 @@ class IncidentsTable
         ActionGroup::make([
           ViewAction::make(),
           EditAction::make(),
+          Action::make('download_pdf')
+            ->label('Descargar PDF')
+            ->color('danger')
+            ->icon(Heroicon::OutlinedDocumentArrowDown)
+            ->action(fn (Incident $record) =>
+              ReportService::download(
+                ['incident' => $record],
+                'reports.incident',
+                "incidencia-{$record->id}"
+              )
+            ),
         ])
       ])
       ->toolbarActions([
@@ -82,3 +97,4 @@ class IncidentsTable
       ]);
   }
 }
+

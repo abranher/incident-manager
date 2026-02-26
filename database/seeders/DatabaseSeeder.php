@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
       RolesAndPermissionsSeeder::class,
       UserSeeder::class,
       DepartmentSeeder::class,
-      IncidentSeeder::class,
-      IncidentUpdateSeeder::class,
+      //IncidentSeeder::class,
+      //IncidentUpdateSeeder::class,
     ]);
   }
 }
