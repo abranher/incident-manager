@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
       'document_type' => DocumentType::VENEZOLANO,
       'document_number' => 12940582,
     ])->assignRole($superAdmin);
-    
+
     User::create([
       'name' => 'Moderador',
       'email' => 'moderador@example.com',
@@ -39,12 +39,30 @@ class UserSeeder extends Seeder
     ])->assignRole($mod);
 
     User::create([
+      'name' => 'Moderador2',
+      'email' => 'moderador2@example.com',
+      'password' => 'password',
+      'email_verified_at' => now(),
+      'document_type' => DocumentType::VENEZOLANO,
+      'document_number' => 20185922,
+    ])->assignRole($mod);
+
+    User::create([
       'name' => 'Empleado',
       'email' => 'empleado@example.com',
       'password' => 'password',
       'email_verified_at' => now(),
       'document_type' => DocumentType::VENEZOLANO,
       'document_number' => 14959023,
+    ])->assignRole($emp);
+
+    User::create([
+      'name' => 'Empleado2',
+      'email' => 'empleado2@example.com',
+      'password' => 'password',
+      'email_verified_at' => now(),
+      'document_type' => DocumentType::VENEZOLANO,
+      'document_number' => 14959022,
     ])->assignRole($emp);
   }
 }
