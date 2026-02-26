@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ActivityLogs\Tables;
 
+use App\Models\ActivityLog;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -32,7 +33,10 @@ class ActivityLogsTable
           ->label('Descripción'),
         TextColumn::make('causer.name')
           ->label('Causado por')
-          ->default('Sistema'),
+          ->default('Sistema')
+          ->formatStateUsing(fn (ActivityLog $record) =>
+            user_label($record->causer->name, $record->causer->email)
+          )
       ])
       ->filters([
         //

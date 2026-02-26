@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ActivityLogs\Schemas;
 
+use App\Models\ActivityLog;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -26,7 +27,10 @@ class ActivityLogInfolist
               ->label('Descripción'),
             TextEntry::make('causer.name')
               ->label('Causado por')
-              ->default('Sistema'),
+              ->default('Sistema')
+              ->formatStateUsing(fn (ActivityLog $record) =>
+                user_label($record->causer->name, $record->causer->email)
+              ),
             TextEntry::make('created_at')
               ->label('Fecha')
               ->date('d/m/Y - g:i A'),

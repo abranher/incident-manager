@@ -52,7 +52,10 @@ class LatestActivityLogs extends TableWidget
           ->label('Descripción'),
         TextColumn::make('causer.name')
           ->label('Causado por')
-          ->default('Sistema'),
+          ->default('Sistema')
+          ->formatStateUsing(fn (ActivityLog $record) =>
+            user_label($record->causer->name, $record->causer->email)
+          ),
       ])
       ->paginated(false)
       ->filters([
