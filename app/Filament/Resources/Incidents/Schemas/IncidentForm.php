@@ -44,8 +44,8 @@ class IncidentForm
                   ->directory('incident-attachments')
                   ->columnSpanFull()
                   ->maxFiles(5),
-            ])
-            ->disabled(fn (string $operation) => $operation === 'edit'),
+            ]),
+            //->disabled(fn (string $operation) => $operation === 'edit'),
           ])
           ->columnSpan(['lg' => 2]),
         Group::make()
@@ -66,8 +66,8 @@ class IncidentForm
                   ->native(false),
               ]),
           ])
-          ->columnSpan(['lg' => 1])
-          ->disabled(fn (string $operation) => $operation === 'edit'),
+          ->columnSpan(['lg' => 1]),
+          //->disabled(fn (string $operation) => $operation === 'edit'),
         ])
         ->columns(3);
   }
